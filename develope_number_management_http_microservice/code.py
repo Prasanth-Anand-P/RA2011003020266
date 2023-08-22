@@ -4,7 +4,7 @@ import asyncio
 
 app = Flask(__name__)
 
-async def fetch_url(url):
+async def url_fetch(url):
     try:
         response = await asyncio.to_thread(requests.get, url)
         if response.status_code == 200:
@@ -12,7 +12,6 @@ async def fetch_url(url):
         else:
             return []
     except Exception as e:
-        print(f"Error fetching URL {url}: {e}")
         return []
 
 @app.route('/numbers', methods=['GET'])
@@ -22,18 +21,18 @@ def get_numbers():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
-    tasks = [fetch_url(url) for url in urls]
+    tasks = [url_fetch(url) for url in urls]
     results = loop.run_until_complete(asyncio.gather(*tasks))
     loop.close()
 
-    merged_numbers = []
-    for result in results:
-        merged_numbers.extend(result)
+    merge_num = []
+    for i in results:
+        merge_num.extend(i)
 
-    unique_numbers = list(set(merged_numbers))
-    sorted_numbers = sorted(unique_numbers)
+    uni_num = list(set(merge_num))
+    sort_num = sorted(uni_num)
 
-    return jsonify({"numbers": sorted_numbers})
+    return jsonify({"numbers": sort_num})
 
 
 
